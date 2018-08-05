@@ -33,7 +33,7 @@ $(function() {
          */
          it('all feed has URL defined, with URL not being empty', () => {
             let allUrlGood = true;
-            allFeeds.forEach(feed => { 
+            allFeeds.forEach(feed => {
                 //chek if feed has url property
                 if(!Object.keys(feed).includes('url')) {
                     allUrlGood = false;
@@ -54,7 +54,7 @@ $(function() {
          */
         it('all feed has name defined, with name not being empty', () => {
             let allNameGood = true;
-            allFeeds.forEach(feed => { 
+            allFeeds.forEach(feed => {
                 //chek if feed has name property
                 if(!Object.keys(feed).includes('name')) {
                     allNameGood = false;
@@ -72,25 +72,16 @@ $(function() {
 
     /* TODO: Write a new test suite named "The menu" */
     describe('The menu', () => {
-        //make sure, DOM is loaded before running any tests
-        beforeEach( (done) => {
-            const interval = setInterval( () => {
-                if(document.readyState == 'complete') {
-                    clearInterval(interval);
-                    done();
-                }
-            }, 100);
-        });
 
         function menuHidden() {
             //return true if menu is hidden
-            return document.body.classList.contains('menu-hidden');            
+            return document.body.classList.contains('menu-hidden');
         }
 
         //function clicks on the menu icon
         function clickMenu() {
             const menuIcon = document.getElementsByClassName('menu-icon-link')[0];
-            menuIcon.click();            
+            menuIcon.click();
         }
         /* TODO: Write a test that ensures the menu element is
          * hidden by default. You'll have to analyze the HTML and
@@ -122,14 +113,21 @@ $(function() {
             //if visiblity is not back to its original state set menuChangesVisibility to false
             if(!(menuHidden() == originallyHidden)){
                 menuChangesVisibility = false;
-            }                
+            }
             expect(menuChangesVisibility).toBe(true);
           });
 
     });
 
+
     /* TODO: Write a new test suite named "Initial Entries" */
     describe('Initial Entries', () => {
+
+      // calling loadFeed before running the test
+      beforeEach( (done) => {
+        loadFeed(0, done);
+        });
+
 
         /* TODO: Write a test that ensures when the loadFeed
          * function is called and completes its work, there is at least
@@ -137,15 +135,45 @@ $(function() {
          * Remember, loadFeed() is asynchronous so this test will require
          * the use of Jasmine's beforeEach and asynchronous done() function.
          */
-         it('loadFeed loads properly', () => {
 
-         });
+      //to test if the feed has at least one entry, I select the first entry
+      //and expect it not to be null
+      it('loadFeed loads properly', (done) => {
+        let entries = document.querySelector('div.feed > .entry-link');
+        expect(entries).not.toBe(null);
+        done();
+      });
 
-    /* TODO: Write a new test suite named "New Feed Selection" */
+   });
+
+    // /* TODO: Write a new test suite named "New Feed Selection" */
+    describe('New Feed Selection', () => {
+
+     //define variables to store feed content for the feed1 and feed2
+     let content1, content2;
+
+     //before running the test loading feed1 and storing its first entry
+     //also running feed2 and storing its first entry
+     beforeEach( (done) => {
+       loadFeed(0, () => {
+         content1 = document.querySelector('div.feed > .entry-link').innerHTML;
+       });
+       loadFeed(1, () => {
+         content2 = document.querySelector('div.feed > .entry-link').innerHTML;
+         done();
+       });
+     });
 
         /* TODO: Write a test that ensures when a new feed is loaded
          * by the loadFeed function that the content actually changes.
          * Remember, loadFeed() is asynchronous.
          */
-    });
-}());
+       //checking if the first entries of the two feeds differ
+       it('feed contect changes with when new feed is selected', (done) => {
+         expect(content1).not.toEqual(content2);
+         done();
+       });
+
+     });
+
+    }());
